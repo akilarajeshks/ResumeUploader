@@ -3,6 +3,8 @@
     package="com.works.resumeuploader">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="com.android.vending.BILLING" />
+
 
     <application
         android:allowBackup="true"
