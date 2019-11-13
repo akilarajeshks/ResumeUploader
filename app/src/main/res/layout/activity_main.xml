@@ -40,4 +40,14 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView" />
+
+    <Button
+        android:id="@+id/buy_paid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Purchase Paid Version!"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/startUpload" />
 </androidx.constraintlayout.widget.ConstraintLayout>

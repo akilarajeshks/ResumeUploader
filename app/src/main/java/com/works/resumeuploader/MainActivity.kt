@@ -13,13 +13,23 @@ import android.view.View
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
+import com.android.billingclient.api.*
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
 import java.io.FileOutputStream
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), PurchasesUpdatedListener {
+    override fun onPurchasesUpdated(
+        billingResult: BillingResult?,
+        purchases: MutableList<Purchase>?
+    ) {
+
+    }
+
     private val READ_REQUEST_CODE: Int = 42
+
+    lateinit private var billingClient: BillingClient
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,7 +41,44 @@ class MainActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
 
+        billingClient =
+            BillingClient.newBuilder(this).enablePendingPurchases().setListener(this).build()
+        billingClient.startConnection(object : BillingClientStateListener {
+            override fun onBillingSetupFinished(billingResult: BillingResult) {
+                if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
+
+                    val skuDetailsParams =
+                        SkuDetailsParams.newBuilder().setSkusList(listOf("inapp_online_upload"))
+                            .setType(BillingClient.SkuType.INAPP)
+
+                    billingClient.querySkuDetailsAsync(skuDetailsParams.build()) { billingResult2, skuDetailsList ->
+                        // Process the result.
+                        buy_paid.setOnClickListener {
+
+
+                            // Retrieve a value for "skuDetails" by calling querySkuDetailsAsync().
+                            val flowParams = BillingFlowParams.newBuilder()
+                                .setSkuDetails(skuDetailsList.first())
+                                .build()
+                            val responseCode =
+                                billingClient.launchBillingFlow(this@MainActivity, flowParams)
+                        }
+                    }
+                }
+            }
+
+            override fun onBillingServiceDisconnected() {
+
+            }
+        })
+
+
+
         showFiles()
+
+
+
+
 
         startUpload.setOnClickListener {
             val intent = Intent(Intent.ACTION_GET_CONTENT)
